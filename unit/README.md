@@ -8,14 +8,41 @@ The agent endpoint daemon for Latis.
 - **Agent wrapping**: Interface with underlying AI agents (Claude, GPT, local models, custom code)
 - **Session state**: Maintain conversation context and agent state
 - **Streaming**: Push response chunks back to cmdr in real-time
+- **Connection management**: Accept connections from cmdr OR dial out to cmdr
 
 ## Operation Modes
 
 A unit can run as:
 
 - **Daemon**: Long-running process accepting connections
-- **On-demand**: Spawned by connector (e.g., via SSH), runs for session duration
+- **On-demand**: Spawned by provisioner, runs for session duration
 - **Embedded**: Library mode, integrated into other applications
+
+## Connection Direction
+
+Units can connect to cmdr in two ways:
+
+```
+┌────────────┐                    ┌────────────┐
+│    cmdr    │ ──── dial-out ───→ │    unit    │   cmdr initiates (unit listens)
+└────────────┘                    └────────────┘
+
+┌────────────┐                    ┌────────────┐
+│    cmdr    │ ←─── dial-in ────  │    unit    │   unit initiates (cmdr listens)
+└────────────┘                    └────────────┘
+```
+
+**When cmdr dials out (unit listens):**
+- Unit exposes an endpoint (TCP, WebSocket, Unix socket)
+- cmdr connects to it
+- Works well for: local processes, accessible servers, VMs with known addresses
+
+**When unit dials out (cmdr listens):**
+- cmdr exposes a listener endpoint
+- Unit connects back to cmdr
+- Works well for: NAT traversal, firewalled environments, ephemeral cloud instances
+
+**Constraint:** At least one connection method must be configured. A unit can support both (listen AND dial), and can have multiple listeners.
 
 ## Protocol Messages Handled
 
