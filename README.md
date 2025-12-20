@@ -16,22 +16,26 @@ latis coordinate task-123 --agents prod-1,prod-2,dev-local
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                        CLI / API                        │
-├─────────────────────────────────────────────────────────┤
-│                   Orchestration Layer                   │
-│          (coordination, routing, session mgmt)          │
-├─────────────────────────────────────────────────────────┤
-│                      Core Protocol                      │
-│             (the contract everything speaks)            │
-├─────────────────────────────────────────────────────────┤
-│                    Transport Layer                      │
-│         SSH │ WebSocket │ HTTP │ Local │ Container      │
-├─────────────────────────────────────────────────────────┤
-│                     Agent Adapters                      │
-│              (any agent that speaks the protocol)       │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────┐
+│      cmdr        │  ← CLI + orchestration brain
+└────────┬─────────┘
+         │
+    ┌────┴────┐
+    │connector│  ← transport plugins (ssh, ws, local, etc.)
+    └────┬────┘
+         │
+┌────────┴─────────┐
+│       unit       │  ← agent endpoint (runs on remote/local)
+└──────────────────┘
 ```
+
+### Components
+
+- **[cmdr](./cmdr/)** — The control plane. CLI interface, orchestration, session management, agent coordination. This is what users interact with.
+
+- **[connector](./connector/)** — Transport abstraction layer. Pluggable modules that know how to move bytes between cmdr and units. SSH, WebSocket, local process, container exec — each is a connector plugin.
+
+- **[unit](./unit/)** — The endpoint daemon. Runs wherever agents live. Receives protocol messages, executes work (wrapping any underlying AI agent), streams responses back. Lightweight and embeddable.
 
 ## Design Principles
 
