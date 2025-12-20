@@ -21,11 +21,13 @@ cmdr → connector → unit → [agent]
 
 ## Key Design Decisions
 
+- **Go** for the core (cmdr, unit, connectors) — single binary, easy cross-compilation, good concurrency
 - **Protobuf schemas, not full gRPC** — works over any byte stream
 - **Length-prefixed framing** — simple, transport-agnostic
 - **Multiplexed protocol** — message IDs, async, interleaved control
 - **Bidirectional connections** — cmdr can dial out, units can dial in
 - **Pluggable provisioners** — process, container, VM, cloud
+- **Polyglot plugins** — connectors and agent adapters can be any language
 
 ## Status
 
