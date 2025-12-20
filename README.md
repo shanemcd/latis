@@ -37,6 +37,8 @@ latis coordinate task-123 --agents prod-1,prod-2,dev-local
 
 - **[unit](./unit/)** — The endpoint daemon. Runs wherever agents live. Receives protocol messages, executes work (wrapping any underlying AI agent), streams responses back. Lightweight and embeddable.
 
+- **[protocol](./protocol/)** — The wire protocol. Protobuf schemas for type safety, length-prefixed framing for transport flexibility. Fully multiplexed and async.
+
 ## Design Principles
 
 - **Transport agnostic**: SSH today, WebSocket tomorrow, carrier pigeon if you write the plugin
@@ -46,24 +48,13 @@ latis coordinate task-123 --agents prod-1,prod-2,dev-local
 
 ## Core Protocol
 
-The protocol defines how the control plane communicates with agents:
+See **[protocol/](./protocol/)** for full details.
 
-```
-Messages (Controller → Agent):
-  session.create      Create a new agent session
-  session.resume      Reconnect to existing session
-  session.destroy     Terminate session
-  prompt.send         Send input (streaming response)
-  prompt.cancel       Cancel in-progress operation
-  state.get           Query agent state
-  state.subscribe     Subscribe to state changes
-
-Messages (Agent → Controller):
-  response.chunk      Streaming output
-  response.complete   Operation finished
-  state.update        State change notification
-  error               Error occurred
-```
+Key decisions:
+- **Protobuf schemas** for type safety and code generation
+- **Length-prefixed framing** (not HTTP/2) so it works over any byte stream
+- **Fully multiplexed** — messages have IDs, either side can send anytime, control messages interleave with data
+- **gRPC upgrade path** for transports that support it (WebSocket, TCP, QUIC)
 
 ## Transports
 
