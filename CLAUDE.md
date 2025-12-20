@@ -1,0 +1,38 @@
+# CLAUDE.md
+
+Guidance for Claude Code when working in this repository.
+
+## What is Latis?
+
+A control plane for distributed AI agents. Transport-agnostic, agent-agnostic, pluggable everything.
+
+## Architecture
+
+```
+cmdr → connector → unit → [agent]
+```
+
+| Component | Purpose | Details |
+|-----------|---------|---------|
+| **cmdr** | Human interface, orchestration, provisioning | [cmdr/README.md](./cmdr/README.md) |
+| **connector** | Transport layer (SSH, WebSocket, etc.) | [connector/README.md](./connector/README.md) |
+| **unit** | Agent endpoint daemon | [unit/README.md](./unit/README.md) |
+| **protocol** | Wire format, message types | [protocol/README.md](./protocol/README.md) |
+
+## Key Design Decisions
+
+- **Protobuf schemas, not full gRPC** — works over any byte stream
+- **Length-prefixed framing** — simple, transport-agnostic
+- **Multiplexed protocol** — message IDs, async, interleaved control
+- **Bidirectional connections** — cmdr can dial out, units can dial in
+- **Pluggable provisioners** — process, container, VM, cloud
+
+## Status
+
+Early design phase. Documentation exists, code does not yet.
+
+## When Working Here
+
+1. Read the component README for context before making changes
+2. Capture design decisions in documentation as they're made
+3. Keep docs minimal — prefer pointers over duplication
