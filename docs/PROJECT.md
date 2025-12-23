@@ -38,7 +38,7 @@ Units should serve two protocols over separate QUIC streams:
 - [x] CI updated with parallel jobs (lint, test, build)
 - [x] Branch ruleset updated to require all three checks
 
-### Unit Multiplexed Transport (PR #10 - open)
+### Unit Multiplexed Transport (PR #10 - merged)
 - [x] `pkg/control/state.go` — Unit state tracking (STARTING, READY, BUSY, DRAINING, STOPPED)
 - [x] `pkg/control/control.go` — ControlServiceServer implementation (Ping, GetStatus, Shutdown)
 - [x] `pkg/control/*_test.go` — Unit tests for control package
@@ -54,21 +54,18 @@ Units should serve two protocols over separate QUIC streams:
 - [x] `--shutdown` flag for Shutdown RPC
 - [x] Default ping via ControlService.Ping
 - [x] Removed old LatisService bidirectional stream dependency
+- [x] Integration tests for multiplexed Control stream (Ping, GetStatus, Shutdown)
+- [x] Connection reuse tests for MuxDialer
 
 ## Next Steps
 
-1. **Integration tests for multiplexed transport**
-   - Test both streams work independently
-   - Test connection reuse across stream types
-   - Test graceful shutdown via Control stream
-
-2. **Cleanup legacy transport code**
+1. **Cleanup legacy transport code**
    - Delete `pkg/transport/quic/dialer.go` (single-stream, replaced by mux_dialer)
    - Delete `pkg/transport/quic/listener.go` (single-stream, replaced by mux_listener)
    - Delete `pkg/transport/quic/conn.go` (replaced by stream_conn)
    - Update `pkg/transport/quic/README.md` for multiplexed API
 
-3. **Remove unused interface packages**
+2. **Remove unused interface packages**
    - Delete `pkg/dialer/` (interface not implemented by QUIC transport)
    - Delete `pkg/listener/` (interface not implemented by QUIC transport)
    - Delete `pkg/connector/` (unused abstraction)
