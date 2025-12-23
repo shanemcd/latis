@@ -1,0 +1,101 @@
+// latis/v1/control.proto
+//
+// Control plane protocol for unit lifecycle and health management.
+//
+// This protocol runs on a dedicated QUIC stream, separate from A2A agent
+// communication. It handles:
+//   - Health checks (ping/pong)
+//   - Lifecycle management (shutdown)
+//   - State queries
+//   - Future: provisioning, resource management
+
+syntax = "proto3";
+
+package latis.v1;
+
+option go_package = "github.com/shanemcd/latis/gen/go/latis/v1;latisv1";
+
+// ControlService handles control plane operations for units.
+// This is separate from agent communication (A2A) and runs on its own stream.
+service ControlService {
+  // Ping checks health and measures latency.
+  rpc Ping(PingRequest) returns (PingResponse);
+
+  // GetStatus returns the current status of the unit.
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+
+  // Shutdown requests graceful termination of the unit.
+  rpc Shutdown(ShutdownRequest) returns (ShutdownResponse);
+}
+
+// =============================================================================
+// Health Check
+// =============================================================================
+
+message PingRequest {
+  // Timestamp when ping was sent (nanoseconds since epoch).
+  int64 timestamp = 1;
+}
+
+message PingResponse {
+  // Echo of the request timestamp.
+  int64 ping_timestamp = 1;
+
+  // Timestamp when pong was generated (nanoseconds since epoch).
+  int64 pong_timestamp = 2;
+}
+
+// =============================================================================
+// Status
+// =============================================================================
+
+message GetStatusRequest {}
+
+message GetStatusResponse {
+  // Unit identity (SPIFFE URI).
+  string identity = 1;
+
+  // Current state of the unit.
+  UnitState state = 2;
+
+  // Uptime in seconds.
+  int64 uptime_seconds = 3;
+
+  // Number of active tasks.
+  int32 active_tasks = 4;
+
+  // Additional status as key-value pairs.
+  map<string, string> metadata = 5;
+}
+
+enum UnitState {
+  UNIT_STATE_UNSPECIFIED = 0;
+  UNIT_STATE_STARTING = 1;
+  UNIT_STATE_READY = 2;
+  UNIT_STATE_BUSY = 3;
+  UNIT_STATE_DRAINING = 4;
+  UNIT_STATE_STOPPED = 5;
+}
+
+// =============================================================================
+// Lifecycle
+// =============================================================================
+
+message ShutdownRequest {
+  // If true, wait for in-progress tasks to complete before shutting down.
+  bool graceful = 1;
+
+  // Maximum time to wait for graceful shutdown (0 = no limit).
+  int64 timeout_seconds = 2;
+
+  // Reason for shutdown (for logging/auditing).
+  string reason = 3;
+}
+
+message ShutdownResponse {
+  // Whether shutdown was accepted.
+  bool accepted = 1;
+
+  // If not accepted, the reason why.
+  string rejection_reason = 2;
+}
