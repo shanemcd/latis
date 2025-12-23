@@ -18,7 +18,7 @@ Units should serve two protocols over separate QUIC streams:
 - [x] `RegisterWithGRPC()` wires A2A services to gRPC server
 - [x] Updated CLAUDE.md with toolbox development instructions
 
-### Multiplexed QUIC Transport (branch: a2a-executor, commit 569dbb2)
+### Multiplexed QUIC Transport (PR #5 - merged)
 - [x] `pkg/transport/quic/stream_type.go` — StreamType constants (Control=0x01, A2A=0x02)
 - [x] `pkg/transport/quic/stream_conn.go` — Wraps QUIC stream as net.Conn
 - [x] `pkg/transport/quic/mux.go` — MuxConn for typed stream open/accept
@@ -26,32 +26,31 @@ Units should serve two protocols over separate QUIC streams:
 - [x] `pkg/transport/quic/mux_dialer.go` — Connection pooling, typed stream dialers
 - [x] `pkg/transport/quic/mux_test.go` — Tests for routing and connection reuse
 
-### Control Protocol (branch: a2a-executor, commit 569dbb2)
+### Control Protocol (PR #5 - merged)
 - [x] `proto/latis/v1/control.proto` — ControlService (Ping, GetStatus, Shutdown)
 - [x] Generated code in `gen/go/latis/v1/control*.go`
 
-## In Progress
-
-### Needs PR
-The multiplexed transport and control protocol work is on `a2a-executor` branch but needs a new PR (the previous one was for A2A executor only and was merged).
+### Test Infrastructure
+- [x] Added `go.uber.org/goleak` for goroutine leak detection
+- [x] `TestMain` with goleak in all test packages (pki, quic, a2aexec, integration)
+- [x] `Makefile` with test targets (`test`, `test-verbose`, `test-cover`, `test-unit`, `test-integration`)
+- [x] Race detection enabled by default (`-race` flag)
 
 ## Next Steps
 
-1. **Create PR for multiplexed transport** — branch off main, cherry-pick or rebase the multiplexing commit
-
-2. **Update unit to serve both protocols**
+1. **Update unit to serve both protocols**
    - Use `MuxListener` instead of single-stream `Listener`
    - Register `ControlService` on control stream listener
    - Register `a2a.v1.A2AService` on A2A stream listener
    - Implement `ControlService` handler (Ping, GetStatus, Shutdown)
 
-3. **Update cmdr to use multiplexed dialer**
+2. **Update cmdr to use multiplexed dialer**
    - Use `MuxDialer` for connection management
    - Create separate gRPC clients for Control and A2A
    - Health checks via Control stream
    - Agent interaction via A2A stream
 
-4. **Integration tests**
+3. **Integration tests**
    - Test both streams work independently
    - Test connection reuse across stream types
    - Test graceful shutdown via Control stream
