@@ -16,5 +16,11 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Run tests
-        run: go test -v ./...
+      - name: Lint
+        run: make lint
+
+      - name: Test (race detection + goleak)
+        run: make test-verbose
+
+      - name: Build
+        run: make build

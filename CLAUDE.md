@@ -78,7 +78,7 @@ PKI files are stored in `~/.latis/pki/`. See [pkg/pki/README.md](./pkg/pki/READM
 
 See **[docs/PROJECT.md](./docs/PROJECT.md)** for current progress and next steps.
 
-**Current**: Implementing multiplexed QUIC transport with separate streams for A2A and Control protocols.
+**Current**: Integrating multiplexed QUIC transport into unit and cmdr.
 
 ## Development Environment
 
@@ -90,8 +90,36 @@ toolbox run go test ./...
 toolbox run go build ./cmd/...
 ```
 
+## Testing
+
+Tests use [goleak](https://github.com/uber-go/goleak) for goroutine leak detection and race detection is enabled by default.
+
+```bash
+# Run all tests with race detection (default)
+make test
+
+# Verbose output
+make test-verbose
+
+# With coverage report
+make test-cover
+
+# Unit tests only (skip integration)
+make test-unit
+
+# Integration tests only
+make test-integration
+```
+
+Each test package has a `TestMain` that runs goleak verification after all tests complete. If a test leaks goroutines, it will fail.
+
 ## When Working Here
 
 1. Read the component README for context before making changes
 2. Capture design decisions in documentation as they're made
 3. Keep docs minimal — prefer pointers over duplication
+4. **Always update [docs/PROJECT.md](./docs/PROJECT.md)** when completing work:
+   - Move completed items from "In Progress" or "Next Steps" to "Completed"
+   - Add new tasks discovered during implementation to "Next Steps"
+   - Update "Current Objective" if focus has shifted
+   - Keep the tracking document accurate — it's the source of truth for project state
