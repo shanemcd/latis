@@ -96,6 +96,22 @@ LLM integration complete (Ollama). Next: enable agents to execute tools and main
 - [x] Updated README.md, CLAUDE.md with new architecture
 - [x] Created docs/configuration.md and docs/cli.md
 
+### Documentation Audit & Unit→Node Rename (PR #21 - merged)
+- [x] Rewrote `docs/protobuf.md` for current `control.proto` and A2A integration
+- [x] Rewrote `pkg/pki/README.md` with correct CLI flags and cert filenames
+- [x] Rewrote `docs/design/protocol.md` to describe gRPC over QUIC stack
+- [x] Renamed `docs/design/connector.md` → `transport.md`
+- [x] Renamed `docs/design/unit.md` → `server.md`
+- [x] Renamed `docs/design/cmdr.md` → `cli.md`
+- [x] Updated `docs/design/a2a-alignment.md` and `policy.md` terminology
+- [x] Fixed `docs/configuration.md` env vars and added missing PKI vars
+- [x] Deleted unused `pkg/protocol` and `pkg/provisioner` stubs
+- [x] Deleted `docs/design/execution-model.md` (contained outdated examples)
+- [x] **Breaking**: Renamed `UnitState` → `NodeState` in proto
+- [x] **Breaking**: Changed SPIFFE URIs from `spiffe://latis/unit/*` to `spiffe://latis/node/*`
+- [x] Renamed `UnitIdentity` → `NodeIdentity` (kept deprecated alias)
+- [x] Fixed undefined `pki.CmdrIdentity` bug in tests
+
 ## Next Steps
 
 1. **Tool execution framework**
