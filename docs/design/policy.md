@@ -5,7 +5,7 @@ Authorization and policy evaluation for latis.
 ## Why Policy?
 
 Policy governs:
-- Who can connect to which units
+- Who can connect to which nodes
 - What tools an agent is allowed to invoke
 - Resource limits (token budgets, tool call limits)
 - When human approval is required
@@ -46,13 +46,13 @@ allow {
 
 allow {
     input.action == "prompt.send"
-    input.unit.name == input.user.allowed_units[_]
+    input.node.name == input.user.allowed_nodes[_]
 }
 
 # Tool restrictions
 allow_tool {
     input.tool.name == "kubectl"
-    input.unit.capabilities[_] == "k8s"
+    input.node.capabilities[_] == "k8s"
 }
 
 # Require approval for destructive actions
@@ -80,7 +80,7 @@ func (e *Evaluator) Allowed(ctx context.Context, input PolicyInput) (bool, error
 
 As latis develops, policy should answer:
 
-1. **Connection**: Can user X connect to unit Y?
+1. **Connection**: Can user X connect to node Y?
 2. **Actions**: Can this session send prompts? Subscribe to state?
 3. **Tools**: Can this agent invoke tool Z?
 4. **Limits**: What are the resource limits for this session?

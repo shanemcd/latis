@@ -37,7 +37,7 @@ Latis is a single binary with subcommands for both server and client operations:
 
 ## Server Mode
 
-`latis serve` runs as a daemon. See [unit.md](./unit.md) for details.
+`latis serve` runs as a daemon. See [server.md](./server.md) for details.
 
 ## Client Mode
 
