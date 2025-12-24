@@ -99,7 +99,6 @@ PKI files are stored in `~/.latis/pki/`. See [pkg/pki/README.md](./pkg/pki/READM
 ### Design Documents
 
 - [A2A Alignment](./docs/design/a2a-alignment.md) — adopting A2A protocol
-- [Execution Model](./docs/design/execution-model.md) — tools, autonomy, yield points
 - [Protocol](./docs/design/protocol.md) — wire format, message types
 
 ## Status

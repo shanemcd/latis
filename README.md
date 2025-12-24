@@ -207,7 +207,6 @@ latis status -c examples/echo.yaml local
 ### Design Documents
 
 - [A2A Alignment](./docs/design/a2a-alignment.md)
-- [Execution Model](./docs/design/execution-model.md)
 - [Protocol](./docs/design/protocol.md)
 
 ## Name
